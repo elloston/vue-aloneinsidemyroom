@@ -1,3 +1,7 @@
+/**
+ * stores/authStore.ts
+ */
+
 import { defineStore } from "pinia";
 import api from "@/api";
 
@@ -34,6 +38,16 @@ export const useAuthStore = defineStore("auth", {
     },
   },
   actions: {
+    setToken(token: string) {
+      this.token = token;
+      localStorage.setItem("user_token", token);
+    },
+    unsetToken() {
+      this.user = null;
+      this.token = null;
+      localStorage.removeItem("user_token");
+      delete api.defaults.headers.common["Authorization"];
+    },
     async getUser() {
       try {
         if (!this.token) return;
@@ -50,8 +64,7 @@ export const useAuthStore = defineStore("auth", {
           "signup",
           credentials
         );
-        this.token = data.token;
-        localStorage.setItem("user_token", data.token);
+        this.setToken(data.token);
       } catch (e) {
         console.error(e);
         throw e;
@@ -63,8 +76,7 @@ export const useAuthStore = defineStore("auth", {
           "signin",
           credentials
         );
-        this.token = data.token;
-        localStorage.setItem("user_token", data.token);
+        this.setToken(data.token);
       } catch (e) {
         console.error(e);
         throw e;
@@ -74,14 +86,16 @@ export const useAuthStore = defineStore("auth", {
       if (!this.token) return;
       try {
         await api.post("signout");
-        this.user = null;
-        this.token = null;
-        localStorage.removeItem("user_token");
-        delete api.defaults.headers.common["Authorization"];
+        this.unsetToken();
       } catch (e) {
         console.error(e);
         throw e;
       }
+    },
+    redirect(provider: string) {
+      window.location.href = `${
+        import.meta.env.VITE_LARAVEL_URL
+      }/oauth/${provider}`;
     },
   },
 });

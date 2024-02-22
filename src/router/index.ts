@@ -1,3 +1,7 @@
+/**
+ * router/index.ts
+ */
+
 import routes from "./routes";
 import { createRouter, createWebHistory } from "vue-router";
 

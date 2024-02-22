@@ -14,7 +14,7 @@
           <v-form v-model="checkForm" @submit.prevent="onSubmit">
             <v-text-field
               v-model="form.email"
-              :readonly="loading"
+              :readonly="loadingStore.loading"
               :rules="[required]"
               id="email"
               type="email"
@@ -26,7 +26,7 @@
 
             <v-text-field
               v-model="form.password"
-              :readonly="loading"
+              :readonly="loadingStore.loading"
               :rules="[required]"
               id="password"
               type="password"
@@ -39,7 +39,7 @@
 
             <v-btn
               :disabled="!checkForm"
-              :loading="loading"
+              :loading="loadingStore.loading"
               block
               color="primary"
               variant="outlined"
@@ -50,6 +50,8 @@
             </v-btn>
           </v-form>
         </v-card>
+
+        <social-oauth />
       </v-col>
     </v-row>
   </v-container>
@@ -58,10 +60,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
+import { useLoadingStore } from "@/stores/loadingStore";
+import SocialOauth from "@/components/SocialOauth.vue";
 
 const authStore = useAuthStore();
+const loadingStore = useLoadingStore();
 
-const loading = ref(false);
 const checkForm = ref(false);
 const form = ref({
   email: "",
@@ -70,14 +74,14 @@ const form = ref({
 
 async function onSubmit() {
   if (!checkForm.value) return;
-  loading.value = true;
+  loadingStore.setLoading(true);
   try {
     await authStore.signin(form.value);
     await authStore.getUser();
   } catch (e) {
     console.error(e);
   } finally {
-    loading.value = false;
+    loadingStore.setLoading(false);
   }
 }
 

@@ -1,5 +1,5 @@
 /**
- * /src/api/index.ts
+ * api/index.ts
  */
 
 import axios from "axios";

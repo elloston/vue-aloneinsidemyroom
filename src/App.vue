@@ -7,7 +7,7 @@
             <v-btn
               variant="outlined"
               color="primary"
-              rounded="pill"
+              rounded="lg"
               :to="item.path"
             >
               {{ item.label }}
@@ -15,6 +15,14 @@
           </v-col>
         </v-row>
       </v-container>
+
+      <v-progress-linear
+        :active="loadingStore.loading"
+        indeterminate
+        absolute
+        bottom
+        color="primary"
+      ></v-progress-linear>
     </v-app-bar>
 
     <v-main>
@@ -24,8 +32,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import api from "./api";
+import { ref } from "vue";
+import { useLoadingStore } from "@/stores/loadingStore";
+
+const loadingStore = useLoadingStore();
 
 const items = ref([
   {

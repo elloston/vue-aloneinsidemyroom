@@ -2,7 +2,7 @@
  * router/routes.ts
  */
 
-import HomeViewVue from "@/views/HomeView.vue";
+import PostsViewVue from "@/views/PostsView.vue";
 import { useAuthStore } from "@/stores/authStore";
 
 function removeQueryParams(to) {
@@ -11,7 +11,7 @@ function removeQueryParams(to) {
 }
 
 const routes = [
-  { path: "/", component: HomeViewVue },
+  { path: "/", component: PostsViewVue },
   { path: "/signup", component: () => import("@/views/SignupView.vue") },
   { path: "/signin", component: () => import("@/views/SigninView.vue") },
   {

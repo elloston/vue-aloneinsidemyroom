@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-card class="mb-2">
     <div id="editor"></div>
-  </div>
+  </v-card>
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" align="center" class="h-screen">
-      <v-col cols="12" md="4">
+      <v-col cols="12" sm="8" md="5">
         <h1 class="text-blue-grey-lighten-3 font-weight-light text-h4 mb-3">
           Sign Up
         </h1>
@@ -67,6 +67,7 @@
               label="Name"
               color="primary"
               variant="outlined"
+              size="sm"
             ></v-text-field>
 
             <v-btn
@@ -82,6 +83,7 @@
             </v-btn>
           </v-form>
         </v-card>
+        <social-oauth />
       </v-col>
     </v-row>
   </v-container>
@@ -90,6 +92,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
+import router from "@/router";
 
 const authStore = useAuthStore();
 
@@ -110,6 +113,7 @@ async function onSubmit() {
     console.log(form.value);
     await authStore.signup(form.value);
     await authStore.getUser();
+    router.push("/");
   } catch (e) {
     console.error(e);
   } finally {

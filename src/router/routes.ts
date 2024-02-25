@@ -14,6 +14,7 @@ const routes = [
   { path: "/", component: PostsViewVue },
   { path: "/signup", component: () => import("@/views/SignupView.vue") },
   { path: "/signin", component: () => import("@/views/SigninView.vue") },
+  { path: "/signout", component: () => import("@/views/SignoutView.vue") },
   {
     path: "/oauth",
     component: { template: "<div>OAuth</div>" },

@@ -7,7 +7,7 @@
       variant="text"
     >
       <v-icon
-        :color="reactable.current_user_reaction?.type === 1 ? 'red' : 'black'"
+        :color="reactable.current_user_reaction?.type === 1 ? 'red' : 'default'"
         :icon="
           reactable.current_user_reaction?.type === 1
             ? 'mdi-cards-heart'
@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/authStore";
 import api from "@/api";
+import router from "@/router";
 
 const authStore = useAuthStore();
 
@@ -55,7 +56,7 @@ async function performReaction(
 
   if (!currentUser) {
     // Redirect to auth
-    console.log("User not authenticated");
+    router.push("/signin");
     return;
   }
 

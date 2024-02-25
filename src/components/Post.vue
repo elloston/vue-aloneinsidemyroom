@@ -38,7 +38,6 @@
                     variant="text"
                     color="primary"
                     block
-                    rounded="pill"
                     class="ml-2"
                   >
                     Leave a comment
@@ -105,14 +104,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import api from "@/api";
+import router from "@/router";
 
 const authStore = useAuthStore();
-
-const commentContent = ref("");
-const showCommentContent = ref(false);
 
 defineProps({
   post: Object,
@@ -134,6 +130,11 @@ async function loadCommentsToPost(post: object) {
 }
 
 async function createCommentToPost(post: number) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
   const { data } = await api.post("comments", {
     post_id: post.id,
     content: post.comments.new.content,
@@ -144,9 +145,19 @@ async function createCommentToPost(post: number) {
 }
 
 function newCommentToPost(post: number) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
   post.comments.new = { content: "", post_id: post.id };
 }
 function cancelCommentToPost(post: number) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
   post.comments.new = null;
 }
 </script>

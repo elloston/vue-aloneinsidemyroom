@@ -2,16 +2,20 @@
   <v-app>
     <v-app-bar fixed>
       <v-container>
-        <v-row>
+        <v-row class="justify-space-between">
           <v-col v-for="item in items" cols="auto">
             <v-btn
-              variant="outlined"
+              variant="text"
               color="primary"
-              rounded="lg"
+              rounded="pill"
               :to="item.path"
             >
               {{ item.label }}
             </v-btn>
+          </v-col>
+
+          <v-col cols="auto">
+            <app-bar-menu />
           </v-col>
         </v-row>
       </v-container>
@@ -32,24 +36,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useLoadingStore } from "@/stores/loadingStore";
+import { useAuthStore } from "@/stores/authStore";
+
+const authStore = useAuthStore();
 
 const loadingStore = useLoadingStore();
 
 const items = ref([
   {
-    label: "Home",
+    label: "Room",
     path: "/",
   },
-  {
-    label: "Sign Up",
-    path: "/signup",
-  },
-
-  {
-    label: "Sign In",
-    path: "/signin",
-  },
 ]);
+
+onBeforeMount(async () => {
+  await authStore.getUser();
+});
 </script>

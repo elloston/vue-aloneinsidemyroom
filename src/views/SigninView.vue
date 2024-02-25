@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center" align="center" class="h-screen">
-      <v-col cols="12" md="4">
+      <v-col cols="12" sm="8" md="5">
         <h1 class="text-blue-grey-lighten-3 font-weight-light text-h4 mb-3">
           Sign In
         </h1>
@@ -61,7 +61,7 @@
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import { useLoadingStore } from "@/stores/loadingStore";
-import SocialOauth from "@/components/SocialOauth.vue";
+import router from "@/router";
 
 const authStore = useAuthStore();
 const loadingStore = useLoadingStore();
@@ -78,6 +78,7 @@ async function onSubmit() {
   try {
     await authStore.signin(form.value);
     await authStore.getUser();
+    router.push("/");
   } catch (e) {
     console.error(e);
   } finally {

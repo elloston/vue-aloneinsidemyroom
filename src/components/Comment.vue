@@ -100,9 +100,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import api from "@/api";
+import router from "@/router";
 
 const authStore = useAuthStore();
 
@@ -126,6 +126,11 @@ async function getReplies(comment: object) {
 }
 
 async function createReply(comment: object) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
   const { data } = await api.post("replies", {
     comment_id: comment.id,
     content: comment.replies.new.content,
@@ -136,9 +141,19 @@ async function createReply(comment: object) {
 }
 
 function newReply(comment: object) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
   comment.replies.new = { content: "", comment_id: comment.id };
 }
 function cancelReply(comment: object) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
   comment.replies.new = null;
 }
 </script>

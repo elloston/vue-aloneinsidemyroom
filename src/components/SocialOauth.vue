@@ -24,8 +24,8 @@ const authStore = useAuthStore();
 const loadingStore = useLoadingStore();
 
 const oauthLinks = ref([
-  { label: "VK", provider: "vkontakte" },
-  { label: "Google", provider: "google" },
+  { label: "VK Sign In", provider: "vkontakte" },
+  // { label: "Google", provider: "google" },
 ]);
 
 function oauthUser(provider: string) {

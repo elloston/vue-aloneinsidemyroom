@@ -9,11 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppBarMenu: typeof import('./src/components/AppBarMenu.vue')['default']
     Comment: typeof import('./src/components/Comment.vue')['default']
-    CommentsBlock: typeof import('./src/components/CommentsBlock.vue')['default']
-    copy: typeof import('./src/components/Comment copy.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    Menu: typeof import('./src/components/Menu.vue')['default']
-    Message: typeof import('./src/components/Message.vue')['default']
     Post: typeof import('./src/components/Post.vue')['default']
     QuillEditor: typeof import('./src/components/QuillEditor.vue')['default']
     Reactions: typeof import('./src/components/Reactions.vue')['default']

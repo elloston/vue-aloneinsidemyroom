@@ -1,73 +1,105 @@
 <template>
   <div v-if="post">
     <v-card color="gray" class="my-5 pa-2">
-      <v-row>
-        <v-col>
-          <div>post id: {{ post.id }}</div>
-
-          <b class="my-3">{{ post.user?.username }}</b>
+      <v-row class="pb-4">
+        <v-col cols="auto" class="pr-0">
+          <v-avatar>
+            <v-icon icon="mdi-account-circle"></v-icon>
+          </v-avatar>
         </v-col>
 
         <v-col>
-          <div>{{ post.likes_count }} likes</div>
-          <v-btn
-            @click="performReaction(post, 1)"
-            size="small"
-            :icon="
-              post.current_user_reaction?.type === 1
-                ? 'mdi-cards-heart'
-                : 'mdi-cards-heart-outline'
-            "
-          >
-          </v-btn>
-        </v-col>
+          <!-- User -->
+          <div class="d-flex mb-2">
+            <b>{{ post.user?.username }}</b>
+            <div class="ml-4">
+              {{ $dateFormat(post.created_at) }}
+            </div>
+          </div>
+          <!-- Content -->
+          <div class="d-flex mb-2">
+            <div v-html="post.content" class="mb-3"></div>
+          </div>
+          <!-- Reactions -->
+          <div class="d-flex mb-2">
+            <reactions :reactable="post" reactableType="post" />
+          </div>
+          <!-- Comments -->
+          <v-row>
+            <v-col>
+              <div>{{ post.comments?.data.length }} comments</div>
+              <v-divider class="mb-2"></v-divider>
+              <!-- New Comment -->
+              <div class="pb-4">
+                <div v-if="!post.comments.new">
+                  <v-btn
+                    @click="newCommentToPost(post)"
+                    size="small"
+                    variant="text"
+                    color="primary"
+                    block
+                    rounded="pill"
+                    class="ml-2"
+                  >
+                    Leave a comment
+                  </v-btn>
+                </div>
 
-        <v-col>
-          <div>{{ post.dislikes_count }} dislikes</div>
-          <v-btn
-            @click="performReaction(post, -1)"
-            size="small"
-            class="ml-2"
-            :icon="
-              post.current_user_reaction?.type === -1
-                ? 'mdi-thumb-down'
-                : 'mdi-thumb-down-outline'
-            "
-          ></v-btn>
+                <div v-else>
+                  <v-textarea
+                    class="mb-2"
+                    block
+                    rounded="lg"
+                    hide-details
+                    rows="1"
+                    variant="outlined"
+                    v-model="post.comments.new.content"
+                  ></v-textarea>
+
+                  <div class="d-flex justify-end">
+                    <v-btn
+                      @click="cancelCommentToPost(post)"
+                      size="small"
+                      rounded="pill"
+                      class="ml-2"
+                      variant="text"
+                    >
+                      cancel
+                    </v-btn>
+                    <v-btn
+                      @click="createCommentToPost(post)"
+                      size="small"
+                      rounded="pill"
+                      class="ml-2"
+                      variant="text"
+                      color="primary"
+                    >
+                      comment
+                    </v-btn>
+                  </div>
+                </div>
+              </div>
+
+              <comment
+                v-for="comment in post.comments.data"
+                :comment="comment"
+              />
+
+              <v-btn
+                v-if="post.comments.links.next"
+                variant="text"
+                color="primary"
+                size="small"
+                @click="loadCommentsToPost(post)"
+                block
+                class="mb-5"
+              >
+                load more comments
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
-
-      <v-row>
-        <v-col>
-          <div v-html="post.content" class="mb-3"></div>
-        </v-col>
-      </v-row>
-
-      <!-- Comments -->
-      <v-divider></v-divider>
-      <v-col>
-        <div class="mb-2">
-          {{ post.comments?.data.length }} comments to post
-        </div>
-
-        <v-textarea rows="1" v-model="commentContent"></v-textarea>
-        <v-btn @click="createCommentToPost(post)" block class="mb-5">
-          create comment
-        </v-btn>
-
-        <comment v-for="comment in post.comments.data" :comment="comment" />
-
-        <v-btn
-          v-if="post.comments.links.next"
-          variant="outlined"
-          size="small"
-          @click="loadCommentsToPost(post)"
-          block
-          class="mb-5"
-        >
-          load more comments
-        </v-btn>
-      </v-col>
     </v-card>
   </div>
 </template>
@@ -80,33 +112,11 @@ import api from "@/api";
 const authStore = useAuthStore();
 
 const commentContent = ref("");
+const showCommentContent = ref(false);
 
 defineProps({
   post: Object,
 });
-
-async function performReaction(post: Post, reactionType: number) {
-  const currentUser = authStore.user;
-
-  if (!currentUser) {
-    // Redirect to auth
-    console.log("User not authenticated");
-    return;
-  }
-
-  try {
-    const { data } = await api.post(`perform_reaction_to/post/${post.id}`, {
-      user_id: currentUser.id,
-      type: reactionType,
-    });
-
-    post.current_user_reaction = data;
-    // ! update post reactions count
-  } catch (e) {
-    console.error("Failed to perform reaction:", e);
-    throw e;
-  }
-}
 
 async function loadCommentsToPost(post: object) {
   if (!post.comments.links.next) return;
@@ -126,10 +136,17 @@ async function loadCommentsToPost(post: object) {
 async function createCommentToPost(post: number) {
   const { data } = await api.post("comments", {
     post_id: post.id,
-    content: commentContent.value,
+    content: post.comments.new.content,
   });
 
   post.comments.data = [data, ...post.comments.data];
-  commentContent.value = "";
+  post.comments.new = null;
+}
+
+function newCommentToPost(post: number) {
+  post.comments.new = { content: "", post_id: post.id };
+}
+function cancelCommentToPost(post: number) {
+  post.comments.new = null;
 }
 </script>

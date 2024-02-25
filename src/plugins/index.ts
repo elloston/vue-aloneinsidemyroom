@@ -9,9 +9,11 @@ import { App } from "vue";
 import { createPinia } from "pinia";
 import vuetify from "./vuetify";
 import router from "@/router";
+import dayjs from "./dayjs";
 
 export function registerPlugins(app: App<Element>) {
   app.use(createPinia());
   app.use(router);
   app.use(vuetify);
+  app.use(dayjs);
 }

@@ -1,88 +1,101 @@
 <template>
-  <div v-if="comment">
-    <v-row>
-      <v-col class="pb-0">
-        <div>comment id: {{ comment.id }}</div>
+  <div>
+    <v-row v-if="comment">
+      <v-col cols="auto" class="pr-0">
+        <v-avatar color="">
+          <v-icon icon="mdi-account-circle"></v-icon>
+        </v-avatar>
       </v-col>
 
       <v-col>
-        <div>{{ comment.likes_count }} likes</div>
-        <v-btn
-          @click="performReaction(comment, 1)"
-          size="small"
-          :icon="
-            comment.current_user_reaction?.type === 1
-              ? 'mdi-cards-heart'
-              : 'mdi-cards-heart-outline'
-          "
-        >
-        </v-btn>
-      </v-col>
+        <!-- User -->
+        <div class="d-flex">
+          <b>{{ comment.user?.username }}</b>
+          <div class="ml-4">
+            {{ $dateFormat(comment.created_at) }}
+          </div>
+        </div>
+        <!-- Content -->
+        <div class="d-flex mb-2">
+          <div>{{ comment.content }}</div>
+        </div>
+        <!-- Reactions -->
+        <div class="d-flex mb-2">
+          <reactions :reactable="comment" reactableType="comment" />
+          <div>
+            <v-btn
+              @click="newReply(comment)"
+              size="small"
+              variant="text"
+              block
+              rounded="pill"
+              class="ml-2"
+            >
+              reply
+            </v-btn>
+          </div>
+        </div>
+        <!--Comment Replies -->
+        <div class="mb-2">
+          <!-- New Comment -->
+          <div class="pb-4">
+            <div v-if="!comment.replies.new">
+              <v-divider class="mb-2"></v-divider>
+            </div>
 
-      <v-col>
-        <div>{{ comment.dislikes_count }} dislikes</div>
-        <v-btn
-          @click="performReaction(comment, -1)"
-          size="small"
-          class="ml-2"
-          :icon="
-            comment.current_user_reaction?.type === -1
-              ? 'mdi-thumb-down'
-              : 'mdi-thumb-down-outline'
-          "
-        ></v-btn>
+            <div v-else>
+              <v-textarea
+                class="mb-2"
+                block
+                rounded="lg"
+                hide-details
+                rows="1"
+                no-resize
+                variant="outlined"
+                v-model="comment.replies.new.content"
+              ></v-textarea>
+
+              <div class="d-flex justify-end">
+                <v-btn
+                  @click="cancelReply(comment)"
+                  size="small"
+                  rounded="pill"
+                  class="ml-2"
+                  variant="text"
+                >
+                  cancel
+                </v-btn>
+                <v-btn
+                  @click="createReply(comment)"
+                  size="small"
+                  rounded="pill"
+                  class="ml-2"
+                  variant="text"
+                  color="primary"
+                >
+                  reply
+                </v-btn>
+              </div>
+            </div>
+          </div>
+
+          <reply v-for="reply in comment.replies.data" :reply="reply" />
+
+          <v-btn
+            v-if="comment.replies?.links?.next"
+            variant="text"
+            color="primary"
+            rounded="pill"
+            size="small"
+            @click="getReplies(comment)"
+            block
+          >
+            <div>{{ comment.replies?.meta?.total }} replies</div>
+          </v-btn>
+        </div>
       </v-col>
     </v-row>
-
-    <v-row>
-      <v-col>
-        <div>{{ comment.content }}</div>
-      </v-col>
-    </v-row>
-
-    <!--Comment Replies -->
-
-    <v-textarea
-      variant="outlined"
-      no-resize
-      rows="1"
-      v-model="replyContent"
-    ></v-textarea>
-    <v-btn @click="createReply(comment)" block class="mb-5">
-      create reply
-    </v-btn>
-
-    <div>{{ comment.replies?.meta?.total }} replies</div>
-
-    <reply v-for="reply in comment.replies.data" :reply="reply" />
-
-    <v-btn
-      v-if="comment.replies?.links?.next"
-      variant="outlined"
-      size="small"
-      @click="getReplies(comment)"
-      block
-      class="mb-5"
-    >
-      load replies
-    </v-btn>
-
-    <!-- <div>
-      <div class="mb-2">replies to comment</div>
-
-
-
-      <v-btn
-        v-if="comment.replies.links.next"
-        variant="outlined"
-        size="small"
-        @click="getReplies(comment)"
-        block
-        class="mb-5"
-      >
-        load more replies
-      </v-btn>
-    </div> -->
+    <v-divider class="mb-4"></v-divider>
   </div>
 </template>
 
@@ -93,37 +106,9 @@ import api from "@/api";
 
 const authStore = useAuthStore();
 
-const replyContent = ref();
-
 defineProps({
   comment: Object,
 });
-
-async function performReaction(comment: Comment, reactionType: number) {
-  const currentUser = authStore.user;
-
-  if (!currentUser) {
-    // Redirect to auth
-    console.log("User not authenticated");
-    return;
-  }
-
-  try {
-    const { data } = await api.post(
-      `perform_reaction_to/comment/${comment.id}`,
-      {
-        user_id: currentUser.id,
-        type: reactionType,
-      }
-    );
-
-    comment.current_user_reaction = data;
-    // ! update comment reactions count
-  } catch (e) {
-    console.error("Failed to perform reaction:", e);
-    throw e;
-  }
-}
 
 async function getReplies(comment: object) {
   if (!comment.replies.links.next) return;
@@ -140,13 +125,20 @@ async function getReplies(comment: object) {
   }
 }
 
-async function createReply(comment: number) {
+async function createReply(comment: object) {
   const { data } = await api.post("replies", {
     comment_id: comment.id,
-    content: replyContent.value,
+    content: comment.replies.new.content,
   });
 
   comment.replies.data = [data, ...comment.replies.data];
-  replyContent.value = "";
+  comment.replies.new = null;
+}
+
+function newReply(comment: object) {
+  comment.replies.new = { content: "", comment_id: comment.id };
+}
+function cancelReply(comment: object) {
+  comment.replies.new = null;
 }
 </script>

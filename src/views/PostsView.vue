@@ -6,7 +6,7 @@
         <!-- New post -->
         <div class="pb-5">
           <quill-editor v-model="newPostContent" />
-          <v-btn @click="createPost" block class="my-2"> create post </v-btn>
+          <v-btn @click="createPost" block class="my-2"> Publish </v-btn>
         </div>
         <!-- Posts -->
         <post v-for="post in postsStore.posts?.data" :post="post" />

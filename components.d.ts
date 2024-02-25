@@ -14,6 +14,7 @@ declare module 'vue' {
     Message: typeof import('./src/components/Message.vue')['default']
     Post: typeof import('./src/components/Post.vue')['default']
     QuillEditor: typeof import('./src/components/QuillEditor.vue')['default']
+    Reactions: typeof import('./src/components/Reactions.vue')['default']
     Reply: typeof import('./src/components/Reply.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

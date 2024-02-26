@@ -1,16 +1,10 @@
 <template>
   <v-container>
-    <v-row justify="center" align="center" class="h-screen">
-      <v-col cols="12" sm="8" md="5">
-        <h1 class="text-blue-grey-lighten-3 font-weight-light text-h4 mb-3">
-          Sign In
-        </h1>
-        <v-card
-          class="mx-auto px-6 py-8"
-          variant="outlined"
-          color="primary"
-          rounded="lg"
-        >
+    <v-row class="py-10 justify-center">
+      <v-col cols="12" sm="8" md="6" lg="4">
+        <v-card class="pa-5 pa-md-8">
+          <h1 class="text-h4 font-weight-medium mb-4">Sign In</h1>
+
           <v-form v-model="checkForm" @submit.prevent="onSubmit">
             <v-text-field
               v-model="form.email"
@@ -20,8 +14,8 @@
               type="email"
               class="mb-4"
               label="Email"
-              color="primary"
               variant="outlined"
+              color="primary"
             ></v-text-field>
 
             <v-text-field
@@ -33,8 +27,8 @@
               class="mb-4"
               label="Password"
               placeholder="Enter your password"
-              color="primary"
               variant="outlined"
+              color="primary"
             ></v-text-field>
 
             <v-btn
@@ -42,30 +36,55 @@
               :loading="loadingStore.loading"
               block
               color="primary"
-              variant="outlined"
               type="submit"
               size="large"
+              class="text-body-1"
             >
               Sign In
             </v-btn>
           </v-form>
-        </v-card>
 
-        <social-oauth />
+          <v-dialog v-model="errorText">
+            <v-card>
+              <v-alert
+                type="error"
+                title="Error"
+                :text="errorText"
+                variant="tonal"
+              ></v-alert>
+            </v-card>
+          </v-dialog>
+
+          <social-oauth />
+
+          <v-divider class="mt-5"></v-divider>
+          <v-btn
+            :disabled="loadingStore.loading"
+            color="primary"
+            variant="text"
+            type="submit"
+            size="small"
+            class="text-body-2 mt-4"
+            @click="router.push('/signup')"
+          >
+            Create account
+          </v-btn>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import { useLoadingStore } from "@/stores/loadingStore";
+import { ref } from "vue";
 import router from "@/router";
 
 const authStore = useAuthStore();
 const loadingStore = useLoadingStore();
 
+const errorText = ref();
 const checkForm = ref(false);
 const form = ref({
   email: "",
@@ -74,13 +93,17 @@ const form = ref({
 
 async function onSubmit() {
   if (!checkForm.value) return;
-  loadingStore.setLoading(true);
+
   try {
+    loadingStore.setLoading(true);
+    errorText.value = null;
+
     await authStore.signin(form.value);
     await authStore.getUser();
     router.push("/");
   } catch (e) {
     console.error(e);
+    errorText.value = e.response?.data?.message;
   } finally {
     loadingStore.setLoading(false);
   }

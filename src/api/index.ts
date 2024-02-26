@@ -29,4 +29,16 @@ api.interceptors.request.use(
   }
 );
 
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (e) => {
+    if (e.response && e.response.status === 401) {
+      localStorage.removeItem("user_token"); // Remove the invalid token
+    }
+    return Promise.reject(e);
+  }
+);
+
 export default api;

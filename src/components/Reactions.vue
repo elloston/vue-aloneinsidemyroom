@@ -2,7 +2,7 @@
   <div>
     <v-btn
       @click="performReaction(reactable, 1, reactableType)"
-      size="small"
+      size="x-small"
       rounded="pill"
       variant="text"
     >
@@ -18,8 +18,7 @@
     </v-btn>
     <v-btn
       @click="performReaction(reactable, -1, reactableType)"
-      size="small"
-      class="ml-2"
+      size="x-small"
       rounded="pill"
       variant="text"
     >

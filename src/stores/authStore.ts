@@ -7,6 +7,7 @@ import api from "@/api";
 
 interface User {
   id: number;
+  username: string;
   name: string;
   email: string;
   roles: UserRole[];
@@ -64,7 +65,7 @@ export const useAuthStore = defineStore("auth", {
           "signup",
           credentials
         );
-        this.setToken(data.token);
+        await this.setToken(data.token);
       } catch (e) {
         console.error(e);
         throw e;
@@ -76,7 +77,7 @@ export const useAuthStore = defineStore("auth", {
           "signin",
           credentials
         );
-        this.setToken(data.token);
+        await this.setToken(data.token);
       } catch (e) {
         console.error(e);
         throw e;
@@ -86,7 +87,7 @@ export const useAuthStore = defineStore("auth", {
       if (!this.token) return;
       try {
         await api.post("signout");
-        this.unsetToken();
+        await this.unsetToken();
       } catch (e) {
         console.error(e);
         throw e;

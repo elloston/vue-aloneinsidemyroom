@@ -7,12 +7,18 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AuthorLink: typeof import('./src/components/AuthorLink.vue')['default']
     BottomNavigation: typeof import('./src/components/BottomNavigation.vue')['default']
     Comment: typeof import('./src/components/Comment.vue')['default']
+    CommentComponent: typeof import('./src/components/CommentComponent.vue')['default']
+    CreatedDate: typeof import('./src/components/CreatedDate.vue')['default']
     Post: typeof import('./src/components/Post.vue')['default']
+    PostComponent: typeof import('./src/components/PostComponent.vue')['default']
     QuillEditor: typeof import('./src/components/QuillEditor.vue')['default']
     Reactions: typeof import('./src/components/Reactions.vue')['default']
+    ReactionsComponent: typeof import('./src/components/ReactionsComponent.vue')['default']
     Reply: typeof import('./src/components/Reply.vue')['default']
+    ReplyComponent: typeof import('./src/components/ReplyComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SocialOauth: typeof import('./src/components/SocialOauth.vue')['default']

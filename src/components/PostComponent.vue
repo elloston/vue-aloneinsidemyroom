@@ -9,12 +9,9 @@
         <div class="w-100">
           <!-- User -->
           <div class="mb-2">
-            <div class="text-body-2 font-weight-medium">
-              @{{ post.user?.username }}
-            </div>
-            <div class="font-weight-light text-caption">
-              {{ $dateFormat(post.created_at) }}
-            </div>
+            <author-link :user="post.user" />
+
+            <created-date :date="post.created_at" :link="`/posts/${post.id}`" />
           </div>
           <!-- Content -->
           <div class="d-flex mb-2">
@@ -22,7 +19,7 @@
           </div>
           <!-- Reactions -->
           <div class="d-flex mb-2">
-            <reactions :reactable="post" reactableType="post" />
+            <reactions-component :reactable="post" reactableType="post" />
           </div>
 
           <v-divider class="mb-2"></v-divider>
@@ -87,7 +84,10 @@
           </div>
           <!-- Comments list -->
           <div>
-            <comment v-for="comment in post.comments.data" :comment="comment" />
+            <comment-component
+              v-for="comment in post.comments.data"
+              :comment="comment"
+            />
 
             <v-btn
               v-if="post.comments.links.next"
@@ -112,7 +112,7 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/authStore";
 import { useLoadingStore } from "@/stores/loadingStore";
-import { ref } from "vue";
+import { ref, provide } from "vue";
 import api from "@/api";
 import router from "@/router";
 
@@ -122,9 +122,11 @@ const loadingStore = useLoadingStore();
 const commenting = ref(false);
 const loadingComments = ref(false);
 
-defineProps({
+const props = defineProps({
   post: Object,
 });
+
+provide("postId", props.post.id);
 
 async function loadCommentsToPost(post) {
   if (!post.comments.links.next) return;

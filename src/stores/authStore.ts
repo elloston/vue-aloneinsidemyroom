@@ -65,7 +65,7 @@ export const useAuthStore = defineStore("auth", {
           "signup",
           credentials
         );
-        await this.setToken(data.token);
+        this.setToken(data.token);
       } catch (e) {
         console.error(e);
         throw e;
@@ -77,7 +77,7 @@ export const useAuthStore = defineStore("auth", {
           "signin",
           credentials
         );
-        await this.setToken(data.token);
+        this.setToken(data.token);
       } catch (e) {
         console.error(e);
         throw e;
@@ -87,7 +87,7 @@ export const useAuthStore = defineStore("auth", {
       if (!this.token) return;
       try {
         await api.post("signout");
-        await this.unsetToken();
+        this.unsetToken();
       } catch (e) {
         console.error(e);
         throw e;

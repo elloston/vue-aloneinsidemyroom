@@ -57,9 +57,10 @@ export const usePostsStore = defineStore("posts", {
         throw e;
       }
     },
-    async getById(post: Post) {
+    async getById(id: number) {
       try {
-        const { data } = await api.get(`posts/${post.id}`);
+        const { data } = await api.get(`posts/${id}`);
+        return data;
       } catch (e) {
         console.error(e);
         throw e;

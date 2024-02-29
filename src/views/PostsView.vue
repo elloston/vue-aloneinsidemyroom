@@ -20,7 +20,7 @@
           </v-btn>
         </div>
         <!-- Posts -->
-        <post v-for="post in postsStore.posts?.data" :post="post" />
+        <post-component v-for="post in postsStore.posts?.data" :post="post" />
         <!-- Load more button -->
         <v-btn
           v-if="postsStore.posts?.links?.next"
@@ -55,6 +55,8 @@ const loadingPosts = ref(false);
 const publishingPost = ref(false);
 
 async function loadMorePosts() {
+  if (!postsStore.posts) return;
+
   try {
     loadingPosts.value = true;
     await postsStore.get(postsStore.posts.links.next);

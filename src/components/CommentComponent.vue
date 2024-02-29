@@ -8,12 +8,12 @@
       <div class="w-100">
         <!-- User -->
         <div class="mb-2">
-          <div class="text-body-2 font-weight-medium">
-            @{{ comment.user?.username }}
-          </div>
-          <div class="font-weight-light text-caption">
-            {{ $dateFormat(comment.created_at) }}
-          </div>
+          <author-link :user="comment.user" />
+
+          <created-date
+            :date="comment.created_at"
+            :link="`/posts/${postId}?comment=${comment.id}`"
+          />
         </div>
         <!-- Content -->
         <div class="d-flex mb-2">
@@ -21,7 +21,7 @@
         </div>
         <!-- Reactions -->
         <div class="d-flex justify-start align-center mb-2">
-          <reactions :reactable="comment" reactableType="comment" />
+          <reactions-component :reactable="comment" reactableType="comment" />
           <div>
             <v-btn
               @click="newReply(comment)"
@@ -79,7 +79,10 @@
             </div>
           </div>
 
-          <reply v-for="reply in comment.replies.data" :reply="reply" />
+          <reply-component
+            v-for="reply in comment.replies.data"
+            :reply="reply"
+          />
 
           <v-btn
             v-if="comment.replies?.links?.next"
@@ -108,10 +111,11 @@ import { useLoadingStore } from "@/stores/loadingStore";
 import { ref } from "vue";
 import api from "@/api";
 import router from "@/router";
+import { inject } from "vue";
 
+const postId = inject("postId");
 const authStore = useAuthStore();
 const loadingStore = useLoadingStore();
-
 const replying = ref(false);
 const loadingReplies = ref(false);
 

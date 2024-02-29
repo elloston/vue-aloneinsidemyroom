@@ -12,9 +12,18 @@ function removeQueryParams(to) {
 
 const routes = [
   { path: "/", component: PostsViewVue },
-  { path: "/signup", component: () => import("@/views/SignupView.vue") },
-  { path: "/signin", component: () => import("@/views/SigninView.vue") },
+  {
+    path: "/posts/:id",
+    component: () => import("@/views/PostDetailsView.vue"),
+  },
+  {
+    path: "/users/:username",
+    component: () => import("@/views/UserView.vue"),
+  },
+  // Auth
   { path: "/account", component: () => import("@/views/AccountView.vue") },
+  { path: "/signin", component: () => import("@/views/SigninView.vue") },
+  { path: "/signup", component: () => import("@/views/SignupView.vue") },
   {
     path: "/oauth",
     component: { template: "<div>OAuth</div>" },

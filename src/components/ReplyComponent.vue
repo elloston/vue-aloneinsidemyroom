@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { inject } from "vue";
+const postId = inject("postId");
+
+defineProps({
+  reply: Object,
+});
+</script>
+
 <template>
   <v-row v-if="reply">
     <v-col cols="auto" class="px-0">
@@ -9,12 +18,12 @@
     <v-col class="px-0">
       <!-- User -->
       <div class="mb-2">
-        <div class="text-body-2 font-weight-medium">
-          @{{ reply.user?.username }}
-        </div>
-        <div class="font-weight-light text-caption">
-          {{ $dateFormat(reply.created_at) }}
-        </div>
+        <author-link :user="reply.user" />
+
+        <created-date
+          :date="reply.created_at"
+          :link="`/posts/${postId}?reply=${reply.id}`"
+        />
       </div>
       <!-- Content -->
       <div class="d-flex">
@@ -22,14 +31,8 @@
       </div>
       <!-- Reactions -->
       <div class="d-flex">
-        <reactions :reactable="reply" reactableType="reply" />
+        <reactions-component :reactable="reply" reactableType="reply" />
       </div>
     </v-col>
   </v-row>
 </template>
-
-<script setup lang="ts">
-defineProps({
-  reply: Object,
-});
-</script>

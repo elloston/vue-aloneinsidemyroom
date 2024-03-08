@@ -13,8 +13,6 @@ const api = axios.create({
   },
 });
 
-api.get(`${import.meta.env.VITE_LARAVEL_URL}/sanctum/csrf-cookie`);
-
 api.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore();

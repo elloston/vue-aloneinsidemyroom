@@ -2,7 +2,13 @@
   <div>
     <div class="d-flex justify-start" v-if="comment">
       <div class="pr-2">
-        <v-icon icon="mdi-account-circle"></v-icon>
+        <v-avatar>
+          <v-img
+            v-if="comment.user.avatar"
+            :src="`http://localhost:8080/storage/${comment.user.avatar}`"
+          ></v-img>
+          <v-icon v-else icon="mdi-account-circle"></v-icon>
+        </v-avatar>
       </div>
 
       <div class="w-100">

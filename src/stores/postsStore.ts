@@ -57,7 +57,7 @@ export const usePostsStore = defineStore("posts", {
         throw e;
       }
     },
-    async getById(id: number) {
+    async getById(id) {
       try {
         const { data } = await api.get(`posts/${id}`);
         return data;
@@ -66,9 +66,9 @@ export const usePostsStore = defineStore("posts", {
         throw e;
       }
     },
-    async update(post: Post, contentData: string) {
+    async update(id: number, contentData: string) {
       try {
-        const { data } = await api.put(`posts/${post.id}`, {
+        const { data } = await api.put(`posts/${id}`, {
           content: contentData,
         });
       } catch (e) {
@@ -79,28 +79,6 @@ export const usePostsStore = defineStore("posts", {
     async delete(post: Post) {
       try {
         const { data } = await api.delete(`posts/${post.id}`);
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    },
-    async getPostComments(post: Post) {
-      try {
-        const { data } = await api.get(`posts`, { content: contentData });
-        if (this.posts) {
-          this.posts.data = [data, ...this.posts.data];
-        }
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    },
-    async getCommentReplies(comment: object) {
-      try {
-        const { data } = await api.get(`posts`, { content: contentData });
-        if (this.posts) {
-          this.posts.data = [data, ...this.posts.data];
-        }
       } catch (e) {
         console.error(e);
         throw e;

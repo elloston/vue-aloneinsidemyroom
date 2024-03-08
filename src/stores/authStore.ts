@@ -8,6 +8,7 @@ import api from "@/api";
 interface User {
   id: number;
   username: string;
+  avatar: string;
   name: string;
   email: string;
   roles: UserRole[];

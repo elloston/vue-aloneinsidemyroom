@@ -1,9 +1,90 @@
+<script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore";
+import { ref, provide } from "vue";
+import api from "@/api";
+import router from "@/router";
+
+const authStore = useAuthStore();
+
+const commenting = ref(false);
+const loadingComments = ref(false);
+const editablePost = ref({});
+
+const props = defineProps({
+  post: Object,
+});
+
+provide("postId", props.post.id);
+
+async function loadCommentsToPost(post) {
+  if (!post.comments.links.next) return;
+
+  try {
+    loadingComments.value = true;
+    const { data } = await api.get(post.comments.links.next);
+
+    post.comments.data = [...post.comments.data, ...data.data];
+    post.comments.links = data.links;
+    post.comments.meta = data.meta;
+  } catch (e) {
+    console.error("Failed to perform reaction:", e);
+    throw e;
+  } finally {
+    loadingComments.value = false;
+  }
+}
+// Commenting post
+async function createCommentToPost(post) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
+  try {
+    commenting.value = true;
+
+    const { data } = await api.post("comments", {
+      post_id: post.id,
+      content: post.comments.new.content,
+    });
+    post.comments.data = [data, ...post.comments.data];
+    post.comments.new = null;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    commenting.value = false;
+  }
+}
+function newCommentToPost(post) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
+  post.comments.new = { content: "", post_id: post.id };
+}
+function cancelCommentToPost(post) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
+  post.comments.new = null;
+}
+</script>
+
 <template>
   <div v-if="post">
     <v-card class="mb-8 pa-4">
       <div class="d-flex justify-start">
-        <div class="pr-2">
-          <v-icon icon="mdi-account-circle"></v-icon>
+        <div class="mr-2">
+          <v-avatar>
+            <v-img
+              v-if="post.user.avatar"
+              :src="`http://localhost:8080/storage/${post.user.avatar}`"
+            ></v-img>
+            <v-icon v-else icon="mdi-account-circle"></v-icon>
+          </v-avatar>
         </div>
 
         <div class="w-100">
@@ -11,12 +92,26 @@
           <div class="mb-2">
             <author-link :user="post.user" />
 
-            <created-date :date="post.created_at" :link="`/posts/${post.id}`" />
+            <div class="d-flex">
+              <created-date
+                :date="post.created_at"
+                :link="`/posts/${post.id}`"
+              />
+
+              <v-btn
+                v-if="post.user.id == authStore.user?.id"
+                size="x-small"
+                variant="text"
+                class="ml-2"
+                @click="router.push(`/posts/editor/${post.id}`)"
+              >
+                <v-icon icon="mdi-pencil-outline"></v-icon>
+              </v-btn>
+            </div>
           </div>
           <!-- Content -->
-          <div class="d-flex mb-2">
-            <div v-html="post.content" class="mb-3"></div>
-          </div>
+          <div v-html="post.content" class="mb-2"></div>
+
           <!-- Reactions -->
           <div class="d-flex mb-2">
             <reactions-component :reactable="post" reactableType="post" />
@@ -108,80 +203,3 @@
     </v-card>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useAuthStore } from "@/stores/authStore";
-import { useLoadingStore } from "@/stores/loadingStore";
-import { ref, provide } from "vue";
-import api from "@/api";
-import router from "@/router";
-
-const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
-
-const commenting = ref(false);
-const loadingComments = ref(false);
-
-const props = defineProps({
-  post: Object,
-});
-
-provide("postId", props.post.id);
-
-async function loadCommentsToPost(post) {
-  if (!post.comments.links.next) return;
-
-  try {
-    loadingComments.value = true;
-    const { data } = await api.get(post.comments.links.next);
-
-    post.comments.data = [...post.comments.data, ...data.data];
-    post.comments.links = data.links;
-    post.comments.meta = data.meta;
-  } catch (e) {
-    console.error("Failed to perform reaction:", e);
-    throw e;
-  } finally {
-    loadingComments.value = false;
-  }
-}
-
-async function createCommentToPost(post) {
-  if (!authStore.user) {
-    router.push("/signin");
-    return;
-  }
-
-  try {
-    commenting.value = true;
-
-    const { data } = await api.post("comments", {
-      post_id: post.id,
-      content: post.comments.new.content,
-    });
-    post.comments.data = [data, ...post.comments.data];
-    post.comments.new = null;
-  } catch (e) {
-    console.error(e);
-  } finally {
-    commenting.value = false;
-  }
-}
-
-function newCommentToPost(post) {
-  if (!authStore.user) {
-    router.push("/signin");
-    return;
-  }
-
-  post.comments.new = { content: "", post_id: post.id };
-}
-function cancelCommentToPost(post) {
-  if (!authStore.user) {
-    router.push("/signin");
-    return;
-  }
-
-  post.comments.new = null;
-}
-</script>

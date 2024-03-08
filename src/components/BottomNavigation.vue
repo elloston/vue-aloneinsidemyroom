@@ -7,16 +7,27 @@
       bottom
       color="primary"
     ></v-progress-linear>
-    <v-btn value="room" to="/">
-      <v-icon>mdi-account-group</v-icon>
 
-      <span>Room</span>
+    <!-- <v-btn value="compilations" to="/compilations">
+      <v-icon size="24px">mdi-account-group</v-icon>
+    </v-btn> -->
+
+    <v-btn value="room" to="/">
+      <v-icon size="24px">mdi-account-group</v-icon>
     </v-btn>
 
-    <v-btn value="account" :to="authStore.user ? `/account` : `/signin`">
-      <v-icon icon="mdi-account-circle"></v-icon>
+    <v-btn v-if="authStore.user" value="account" to="/account">
+      <v-avatar size="28px">
+        <v-img
+          v-if="authStore.user.avatar"
+          :src="`http://localhost:8080/storage/${authStore.user.avatar}`"
+        ></v-img>
+        <v-icon v-else icon="mdi-account-circle"></v-icon>
+      </v-avatar>
+    </v-btn>
 
-      <span>{{ authStore.user ? authStore.user.username : "Account" }}</span>
+    <v-btn v-else value="account" to="/signin">
+      <v-icon icon="mdi-account-circle"></v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>

@@ -1,3 +1,50 @@
+<script setup lang="ts">
+import { useLoadingStore } from "@/stores/loadingStore";
+import { useAuthStore } from "@/stores/authStore";
+import router from "@/router";
+import { ref } from "vue";
+import api from "@/api";
+
+const authStore = useAuthStore();
+const loadingStore = useLoadingStore();
+const newAvatar = ref();
+const uploading = ref(false);
+
+async function logoutUser() {
+  try {
+    loadingStore.setLoading(true);
+
+    await authStore.signout();
+    router.push("/signin");
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loadingStore.setLoading(false);
+  }
+}
+
+async function uploadAvatar() {
+  try {
+    uploading.value = true;
+    const formData = new FormData();
+
+    formData.append("avatar", newAvatar.value[0]);
+
+    const { data } = await api.post("user/update-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    authStore.user = data;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    uploading.value = false;
+  }
+}
+</script>
+
 <template>
   <div>
     <v-container>
@@ -5,6 +52,20 @@
         <v-col cols="12" sm="8" md="6" lg="4">
           <v-card class="pa-5 pa-md-8" v-if="authStore.user">
             <h1 class="text-h4 font-weight-medium mb-4">Account</h1>
+
+            <v-avatar v-if="authStore.user.avatar">
+              <v-img
+                :src="`http://localhost:8080/storage/${authStore.user.avatar}`"
+              >
+              </v-img>
+            </v-avatar>
+
+            <v-file-input
+              variant="outlined"
+              v-model="newAvatar"
+              :multiple="false"
+              @change="uploadAvatar()"
+            ></v-file-input>
 
             <v-text-field
               v-model="authStore.user.username"
@@ -47,25 +108,3 @@
     </v-container>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useLoadingStore } from "@/stores/loadingStore";
-import { useAuthStore } from "@/stores/authStore";
-import router from "@/router";
-
-const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
-
-async function logoutUser() {
-  try {
-    loadingStore.setLoading(true);
-
-    await authStore.signout();
-    router.push("/signin");
-  } catch (e) {
-    console.error(e);
-  } finally {
-    loadingStore.setLoading(false);
-  }
-}
-</script>

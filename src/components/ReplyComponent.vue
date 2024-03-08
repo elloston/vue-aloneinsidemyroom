@@ -8,14 +8,18 @@ defineProps({
 </script>
 
 <template>
-  <v-row v-if="reply">
-    <v-col cols="auto" class="px-0">
+  <div class="d-flex" v-if="reply">
+    <div class="mr-2">
       <v-avatar>
-        <v-icon icon="mdi-account-circle"></v-icon>
+        <v-img
+          v-if="reply.user.avatar"
+          :src="`http://localhost:8080/storage/${reply.user.avatar}`"
+        ></v-img>
+        <v-icon v-else icon="mdi-account-circle"></v-icon>
       </v-avatar>
-    </v-col>
+    </div>
 
-    <v-col class="px-0">
+    <div>
       <!-- User -->
       <div class="mb-2">
         <author-link :user="reply.user" />
@@ -33,6 +37,6 @@ defineProps({
       <div class="d-flex">
         <reactions-component :reactable="reply" reactableType="reply" />
       </div>
-    </v-col>
-  </v-row>
+    </div>
+  </div>
 </template>

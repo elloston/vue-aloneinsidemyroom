@@ -1,6 +1,4 @@
-/* global ym */
-
-if (process.env.NODE_ENV === "production") {
+if (import.meta.env.PROD) {
   (function (m, e, t, r, i, k, a) {
     m[i] =
       m[i] ||
@@ -8,7 +6,7 @@ if (process.env.NODE_ENV === "production") {
         (m[i].a = m[i].a || []).push(arguments);
       };
     m[i].l = 1 * new Date();
-    for (var j = 0; j < document.scripts.length; j++) {
+    for (let j = 0; j < document.scripts.length; j++) {
       if (document.scripts[j].src === r) {
         return;
       }
@@ -20,9 +18,5 @@ if (process.env.NODE_ENV === "production") {
       a.parentNode.insertBefore(k, a);
   })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-  ym(96569431, "init", {
-    clickmap: true,
-    trackLinks: true,
-    accurateTrackBounce: true,
-  });
+  ym(import.meta.env.VITE_YANDEX_METRIKA_ID, "init");
 }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { inject } from "vue";
+
 const postId = inject("postId");
+const laravelUrl = import.meta.env.VITE_LARAVEL_URL;
 
 defineProps({
   reply: Object,
@@ -13,7 +15,7 @@ defineProps({
       <v-avatar>
         <v-img
           v-if="reply.user.avatar"
-          :src="`http://localhost:8080/storage/${reply.user.avatar}`"
+          :src="appStore.storeUrl + reply.user.avatar"
         ></v-img>
         <v-icon v-else icon="mdi-account-circle"></v-icon>
       </v-avatar>

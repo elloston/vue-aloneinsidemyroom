@@ -4,11 +4,13 @@ import { useAuthStore } from "@/stores/authStore";
 import router from "@/router";
 import { ref } from "vue";
 import api from "@/api";
+import { useAppStore } from "@/stores/appStore";
 
 const authStore = useAuthStore();
 const loadingStore = useLoadingStore();
 const newAvatar = ref();
 const uploading = ref(false);
+const appStore = useAppStore();
 
 async function logoutUser() {
   try {
@@ -54,10 +56,7 @@ async function uploadAvatar() {
             <h1 class="text-h4 font-weight-medium mb-4">Account</h1>
 
             <v-avatar v-if="authStore.user.avatar">
-              <v-img
-                :src="`http://localhost:8080/storage/${authStore.user.avatar}`"
-              >
-              </v-img>
+              <v-img :src="appStore.storeUrl + authStore.user.avatar"></v-img>
             </v-avatar>
 
             <v-file-input

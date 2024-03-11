@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import { useLoadingStore } from "@/stores/loadingStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useAppStore } from "@/stores/appStore";
+
+const authStore = useAuthStore();
+const loadingStore = useLoadingStore();
+const appStore = useAppStore();
+</script>
+
 <template>
   <v-bottom-navigation>
     <v-progress-linear
@@ -20,7 +30,7 @@
       <v-avatar size="28px">
         <v-img
           v-if="authStore.user.avatar"
-          :src="`http://localhost:8080/storage/${authStore.user.avatar}`"
+          :src="appStore.storeUrl + authStore.user.avatar"
         ></v-img>
         <v-icon v-else icon="mdi-account-circle"></v-icon>
       </v-avatar>
@@ -31,11 +41,3 @@
     </v-btn>
   </v-bottom-navigation>
 </template>
-
-<script setup lang="ts">
-import { useLoadingStore } from "@/stores/loadingStore";
-import { useAuthStore } from "@/stores/authStore";
-
-const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
-</script>

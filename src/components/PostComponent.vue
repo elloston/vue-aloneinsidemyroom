@@ -3,12 +3,13 @@ import { useAuthStore } from "@/stores/authStore";
 import { ref, provide } from "vue";
 import api from "@/api";
 import router from "@/router";
+import { useAppStore } from "@/stores/appStore";
 
 const authStore = useAuthStore();
 
 const commenting = ref(false);
 const loadingComments = ref(false);
-const editablePost = ref({});
+const appStore = useAppStore();
 
 const props = defineProps({
   post: Object,
@@ -81,7 +82,7 @@ function cancelCommentToPost(post) {
           <v-avatar>
             <v-img
               v-if="post.user.avatar"
-              :src="`http://localhost:8080/storage/${post.user.avatar}`"
+              :src="appStore.storeUrl + post.user.avatar"
             ></v-img>
             <v-icon v-else icon="mdi-account-circle"></v-icon>
           </v-avatar>
@@ -180,7 +181,8 @@ function cancelCommentToPost(post) {
           <!-- Comments list -->
           <div>
             <comment-component
-              v-for="comment in post.comments.data"
+              v-for="(comment, index) in post.comments.data"
+              :key="index"
               :comment="comment"
             />
 

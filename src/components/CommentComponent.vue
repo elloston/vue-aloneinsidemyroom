@@ -1,3 +1,79 @@
+<script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore";
+import { ref } from "vue";
+import api from "@/api";
+import router from "@/router";
+import { inject } from "vue";
+import { useAppStore } from "@/stores/appStore";
+
+const postId = inject("postId");
+const authStore = useAuthStore();
+const replying = ref(false);
+const loadingReplies = ref(false);
+const appStore = useAppStore();
+
+defineProps({
+  comment: Object,
+});
+
+async function getReplies(comment) {
+  if (!comment.replies.links.next) return;
+
+  try {
+    loadingReplies.value = true;
+
+    const { data } = await api.get(comment.replies.links.next);
+    comment.replies.data = [...comment.replies.data, ...data.data];
+    comment.replies.links = data.links;
+    comment.replies.meta = data.meta;
+  } catch (e) {
+    console.error("Failed to reply:", e);
+    throw e;
+  } finally {
+    loadingReplies.value = false;
+  }
+}
+
+async function createReply(comment) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
+  try {
+    replying.value = true;
+
+    const { data } = await api.post("replies", {
+      comment_id: comment.id,
+      content: comment.replies.new.content,
+    });
+    comment.replies.data = [data, ...comment.replies.data];
+    comment.replies.new = null;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    replying.value = false;
+  }
+}
+
+function newReply(comment) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
+  comment.replies.new = { content: "", comment_id: comment.id };
+}
+function cancelReply(comment) {
+  if (!authStore.user) {
+    router.push("/signin");
+    return;
+  }
+
+  comment.replies.new = null;
+}
+</script>
+
 <template>
   <div>
     <div class="d-flex justify-start" v-if="comment">
@@ -5,7 +81,7 @@
         <v-avatar>
           <v-img
             v-if="comment.user.avatar"
-            :src="`http://localhost:8080/storage/${comment.user.avatar}`"
+            :src="appStore.storeUrl + comment.user.avatar"
           ></v-img>
           <v-icon v-else icon="mdi-account-circle"></v-icon>
         </v-avatar>
@@ -86,7 +162,8 @@
           </div>
 
           <reply-component
-            v-for="reply in comment.replies.data"
+            v-for="(reply, index) in comment.replies.data"
+            :key="index"
             :reply="reply"
           />
 
@@ -110,79 +187,3 @@
     <v-divider class="mb-4"></v-divider>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useAuthStore } from "@/stores/authStore";
-import { useLoadingStore } from "@/stores/loadingStore";
-import { ref } from "vue";
-import api from "@/api";
-import router from "@/router";
-import { inject } from "vue";
-
-const postId = inject("postId");
-const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
-const replying = ref(false);
-const loadingReplies = ref(false);
-
-defineProps({
-  comment: Object,
-});
-
-async function getReplies(comment) {
-  if (!comment.replies.links.next) return;
-
-  try {
-    loadingReplies.value = true;
-
-    const { data } = await api.get(comment.replies.links.next);
-    comment.replies.data = [...comment.replies.data, ...data.data];
-    comment.replies.links = data.links;
-    comment.replies.meta = data.meta;
-  } catch (e) {
-    console.error("Failed to reply:", e);
-    throw e;
-  } finally {
-    loadingReplies.value = false;
-  }
-}
-
-async function createReply(comment) {
-  if (!authStore.user) {
-    router.push("/signin");
-    return;
-  }
-
-  try {
-    replying.value = true;
-
-    const { data } = await api.post("replies", {
-      comment_id: comment.id,
-      content: comment.replies.new.content,
-    });
-    comment.replies.data = [data, ...comment.replies.data];
-    comment.replies.new = null;
-  } catch (e) {
-    console.error(e);
-  } finally {
-    replying.value = false;
-  }
-}
-
-function newReply(comment) {
-  if (!authStore.user) {
-    router.push("/signin");
-    return;
-  }
-
-  comment.replies.new = { content: "", comment_id: comment.id };
-}
-function cancelReply(comment) {
-  if (!authStore.user) {
-    router.push("/signin");
-    return;
-  }
-
-  comment.replies.new = null;
-}
-</script>

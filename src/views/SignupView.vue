@@ -1,3 +1,47 @@
+<script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore";
+import { useAppStore } from "@/stores/appStore";
+import { ref } from "vue";
+import router from "@/router";
+
+const authStore = useAuthStore();
+const appStore = useAppStore();
+
+const errorText = ref();
+
+const checkForm = ref(false);
+const form = ref({
+  username: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
+  name: "",
+});
+
+async function onSubmit() {
+  if (!checkForm.value) return;
+
+  try {
+    appStore.setLoading(true);
+
+    errorText.value = null;
+
+    await authStore.signup(form.value);
+    await authStore.getUser();
+    router.push("/");
+  } catch (e) {
+    console.error(e);
+    errorText.value = e.response?.data?.message;
+  } finally {
+    appStore.setLoading(false);
+  }
+}
+
+function required(v: string) {
+  return !!v || "Field is required";
+}
+</script>
+
 <template>
   <v-container>
     <v-row class="py-10 justify-center">
@@ -8,7 +52,7 @@
           <v-form v-model="checkForm" @submit.prevent="onSubmit">
             <v-text-field
               v-model="form.email"
-              :readonly="loadingStore.loading"
+              :readonly="appStore.loading"
               :rules="[required]"
               id="email"
               type="email"
@@ -20,7 +64,7 @@
 
             <v-text-field
               v-model="form.password"
-              :readonly="loadingStore.loading"
+              :readonly="appStore.loading"
               :rules="[required]"
               id="password"
               type="password"
@@ -33,7 +77,7 @@
 
             <v-text-field
               v-model="form.password_confirmation"
-              :readonly="loadingStore.loading"
+              :readonly="appStore.loading"
               :rules="[required]"
               type="password"
               class="mb-4"
@@ -45,7 +89,7 @@
 
             <v-text-field
               v-model="form.username"
-              :readonly="loadingStore.loading"
+              :readonly="appStore.loading"
               type="text"
               class="mb-4"
               label="Username/Nickname"
@@ -55,7 +99,7 @@
 
             <v-text-field
               v-model="form.name"
-              :readonly="loadingStore.loading"
+              :readonly="appStore.loading"
               type="text"
               class="mb-4"
               label="Name"
@@ -65,7 +109,7 @@
 
             <v-btn
               :disabled="!checkForm"
-              :loading="loadingStore.loading"
+              :loading="appStore.loading"
               block
               color="primary"
               type="submit"
@@ -90,8 +134,8 @@
 
           <v-divider class="mt-5"></v-divider>
           <v-btn
-            :disabled="loadingStore.loading"
-            :loading="loadingStore.loading"
+            :disabled="appStore.loading"
+            :loading="appStore.loading"
             color="primary"
             variant="text"
             type="submit"
@@ -106,47 +150,3 @@
     </v-row>
   </v-container>
 </template>
-
-<script setup lang="ts">
-import { useAuthStore } from "@/stores/authStore";
-import { useLoadingStore } from "@/stores/loadingStore";
-import { ref } from "vue";
-import router from "@/router";
-
-const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
-
-const errorText = ref();
-
-const checkForm = ref(false);
-const form = ref({
-  username: "",
-  email: "",
-  password: "",
-  password_confirmation: "",
-  name: "",
-});
-
-async function onSubmit() {
-  if (!checkForm.value) return;
-
-  try {
-    loadingStore.setLoading(true);
-
-    errorText.value = null;
-
-    await authStore.signup(form.value);
-    await authStore.getUser();
-    router.push("/");
-  } catch (e) {
-    console.error(e);
-    errorText.value = e.response?.data?.message;
-  } finally {
-    loadingStore.setLoading(false);
-  }
-}
-
-function required(v: string) {
-  return !!v || "Field is required";
-}
-</script>

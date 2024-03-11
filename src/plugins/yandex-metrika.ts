@@ -18,5 +18,9 @@ if (import.meta.env.PROD) {
       a.parentNode.insertBefore(k, a);
   })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-  ym(import.meta.env.VITE_YANDEX_METRIKA_ID, "init");
+  ym(import.meta.env.VITE_YANDEX_METRIKA_ID, "init", {
+    clickmap: true,
+    trackLinks: true,
+    accurateTrackBounce: true,
+  });
 }

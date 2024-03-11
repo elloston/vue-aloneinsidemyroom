@@ -1,3 +1,43 @@
+<script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore";
+import api from "@/api";
+import router from "@/router";
+
+const authStore = useAuthStore();
+
+defineProps({
+  reactable: Object,
+  reactableType: String,
+});
+
+async function performReaction(reactable, reactionType, reactableType) {
+  const currentUser = authStore.user;
+
+  if (!currentUser) {
+    // Redirect to auth
+    router.push("/signin");
+    return;
+  }
+
+  try {
+    const { data } = await api.post(
+      `perform_reaction_to/${reactableType}/${reactable.id}`,
+      {
+        user_id: currentUser.id,
+        type: reactionType,
+      }
+    );
+
+    reactable.current_user_reaction = data.current_user_reaction;
+    reactable.likes_count = data.likes_count;
+    reactable.dislikes_count = data.dislikes_count;
+  } catch (e) {
+    console.error("Failed to perform reaction:", e);
+    throw e;
+  }
+}
+</script>
+
 <template>
   <div>
     <v-btn
@@ -33,47 +73,3 @@
     </v-btn>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useAuthStore } from "@/stores/authStore";
-import api from "@/api";
-import router from "@/router";
-
-const authStore = useAuthStore();
-
-defineProps({
-  reactable: Object,
-  reactableType: String,
-});
-
-async function performReaction(
-  reactable: object,
-  reactionType: number,
-  reactableType: string
-) {
-  const currentUser = authStore.user;
-
-  if (!currentUser) {
-    // Redirect to auth
-    router.push("/signin");
-    return;
-  }
-
-  try {
-    const { data } = await api.post(
-      `perform_reaction_to/${reactableType}/${reactable.id}`,
-      {
-        user_id: currentUser.id,
-        type: reactionType,
-      }
-    );
-
-    reactable.current_user_reaction = data.current_user_reaction;
-    reactable.likes_count = data.likes_count;
-    reactable.dislikes_count = data.dislikes_count;
-  } catch (e) {
-    console.error("Failed to perform reaction:", e);
-    throw e;
-  }
-}
-</script>

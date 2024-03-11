@@ -5,11 +5,6 @@
 import PostsViewVue from "@/views/PostsView.vue";
 import { useAuthStore } from "@/stores/authStore";
 
-function removeQueryParams(to) {
-  if (Object.keys(to.query).length)
-    return { path: to.path, query: {}, hash: to.hash };
-}
-
 const routes = [
   { path: "/", component: PostsViewVue },
   {

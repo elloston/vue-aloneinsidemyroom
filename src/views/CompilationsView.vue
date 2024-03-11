@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { useLoadingStore } from "@/stores/loadingStore";
-import { useAuthStore } from "@/stores/authStore";
-import router from "@/router";
 import { ref } from "vue";
-import api from "@/api";
-
-const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
-const newAvatar = ref();
-const uploading = ref(false);
 
 const compilations = ref([
   {

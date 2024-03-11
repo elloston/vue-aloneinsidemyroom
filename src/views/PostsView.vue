@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { usePostsStore } from "@/stores/postsStore";
 import { useAuthStore } from "@/stores/authStore";
-import { useLoadingStore } from "@/stores/loadingStore";
-import { ref, onMounted, watch } from "vue";
+import { useAppStore } from "@/stores/appStore";
+import { ref, onMounted } from "vue";
 import router from "@/router";
 
 const postsStore = usePostsStore();
 const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
+const appStore = useAppStore();
 
 const loadingPosts = ref(false);
 
@@ -34,12 +34,12 @@ async function newPost() {
 
 onMounted(async () => {
   try {
-    loadingStore.setLoading(true);
+    appStore.setLoading(true);
     await postsStore.get(null);
   } catch (e) {
     console.error(e);
   } finally {
-    loadingStore.setLoading(false);
+    appStore.setLoading(false);
   }
 });
 </script>
@@ -58,7 +58,11 @@ onMounted(async () => {
           </v-btn>
         </div>
         <!-- Posts -->
-        <post-component v-for="post in postsStore.posts?.data" :post="post" />
+        <post-component
+          v-for="(post, index) in postsStore.posts?.data"
+          :key="index"
+          :post="post"
+        />
         <!-- Load more button -->
         <v-btn
           v-if="postsStore.posts?.links?.next"

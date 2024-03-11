@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { useAppStore } from "@/stores/appStore";
 import { inject } from "vue";
 
 const postId = inject("postId");
-const laravelUrl = import.meta.env.VITE_LARAVEL_URL;
+const appStore = useAppStore();
 
 defineProps({
   reply: Object,

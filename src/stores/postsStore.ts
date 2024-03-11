@@ -1,34 +1,14 @@
 /**
- * stores/messagesStore.ts
+ * stores/postsStore.ts
  */
 
 import { defineStore } from "pinia";
 import api from "@/api";
 
-interface Post {
-  id: number;
-  content: string;
-  reactions: Reaction[];
-}
-
-interface PostCollection {
-  data: Post[];
-  links: { next: string | null };
-  meta: {};
-}
-
-interface Reaction {
-  type: number;
-  user: object;
-}
-
 export const usePostsStore = defineStore("posts", {
-  state: (): {
-    posts: PostCollection | null;
-  } => ({
-    posts: null,
+  state: () => ({
+    posts: null as PaginatedResponse<Post> | null,
   }),
-  getters: {},
   actions: {
     async get(link: null | string) {
       try {
@@ -71,6 +51,7 @@ export const usePostsStore = defineStore("posts", {
         const { data } = await api.put(`posts/${id}`, {
           content: contentData,
         });
+        console.log(data);
       } catch (e) {
         console.error(e);
         throw e;
@@ -79,6 +60,7 @@ export const usePostsStore = defineStore("posts", {
     async delete(post: Post) {
       try {
         const { data } = await api.delete(`posts/${post.id}`);
+        console.log(data);
       } catch (e) {
         console.error(e);
         throw e;

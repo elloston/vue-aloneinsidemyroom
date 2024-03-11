@@ -2,7 +2,7 @@
   <div class="d-flex mt-4">
     <div v-for="link in oauthLinks" cols="auto">
       <v-btn
-        :disabled="loading || loadingStore.loading"
+        :disabled="loading || appStore.loading"
         :loading="loading"
         variant="text"
         color="primary"
@@ -18,11 +18,11 @@
 
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/authStore";
-import { useLoadingStore } from "@/stores/loadingStore";
+import { useAppStore } from "@/stores/appStore";
 import { ref } from "vue";
 
 const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
+const appStore = useAppStore();
 
 const loading = ref(false);
 

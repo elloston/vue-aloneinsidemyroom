@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { useLoadingStore } from "@/stores/loadingStore";
-import { useAuthStore } from "@/stores/authStore";
 import { useAppStore } from "@/stores/appStore";
+import { useAuthStore } from "@/stores/authStore";
 
 const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
 const appStore = useAppStore();
 </script>
 
 <template>
   <v-bottom-navigation>
     <v-progress-linear
-      :active="loadingStore.loading"
+      :active="appStore.loading"
       indeterminate
       absolute
       bottom

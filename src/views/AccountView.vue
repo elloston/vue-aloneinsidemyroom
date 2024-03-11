@@ -1,27 +1,25 @@
 <script setup lang="ts">
-import { useLoadingStore } from "@/stores/loadingStore";
+import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import router from "@/router";
 import { ref } from "vue";
 import api from "@/api";
-import { useAppStore } from "@/stores/appStore";
 
 const authStore = useAuthStore();
-const loadingStore = useLoadingStore();
 const newAvatar = ref();
 const uploading = ref(false);
 const appStore = useAppStore();
 
 async function logoutUser() {
   try {
-    loadingStore.setLoading(true);
+    appStore.setLoading(true);
 
     await authStore.signout();
     router.push("/signin");
   } catch (e) {
     console.error(e);
   } finally {
-    loadingStore.setLoading(false);
+    appStore.setLoading(false);
   }
 }
 
@@ -94,7 +92,7 @@ async function uploadAvatar() {
             ></v-text-field>
 
             <v-btn
-              :loading="loadingStore.loading"
+              :loading="appStore.loading"
               @click="logoutUser()"
               block
               color="primary"

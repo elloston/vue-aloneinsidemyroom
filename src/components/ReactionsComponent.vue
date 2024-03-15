@@ -39,37 +39,36 @@ async function performReaction(reactable, reactionType, reactableType) {
 </script>
 
 <template>
-  <div>
-    <v-btn
-      @click="performReaction(reactable, 1, reactableType)"
-      size="x-small"
-      rounded="pill"
-      variant="text"
-    >
-      <v-icon
-        :color="reactable.current_user_reaction?.type === 1 ? 'red' : 'default'"
-        :icon="
-          reactable.current_user_reaction?.type === 1
-            ? 'mdi-cards-heart'
-            : 'mdi-cards-heart-outline'
-        "
-      ></v-icon>
-      <div class="ml-2">{{ reactable.likes_count }}</div>
-    </v-btn>
-    <v-btn
-      @click="performReaction(reactable, -1, reactableType)"
-      size="x-small"
-      rounded="pill"
-      variant="text"
-    >
-      <v-icon
-        :icon="
-          reactable.current_user_reaction?.type === -1
-            ? 'mdi-thumb-down'
-            : 'mdi-thumb-down-outline'
-        "
-      ></v-icon>
-      <div class="ml-2">{{ reactable.dislikes_count }}</div>
-    </v-btn>
-  </div>
+  <v-btn
+    @click="performReaction(reactable, 1, reactableType)"
+    size="x-small"
+    rounded="pill"
+    variant="text"
+  >
+    <v-icon
+      :color="reactable.current_user_reaction?.type === 1 ? 'red' : 'default'"
+      :icon="
+        reactable.current_user_reaction?.type === 1
+          ? 'mdi-cards-heart'
+          : 'mdi-cards-heart-outline'
+      "
+    ></v-icon>
+    <div class="ml-2">{{ reactable.likes_count }}</div>
+  </v-btn>
+
+  <v-btn
+    @click="performReaction(reactable, -1, reactableType)"
+    size="x-small"
+    rounded="pill"
+    variant="text"
+  >
+    <v-icon
+      :icon="
+        reactable.current_user_reaction?.type === -1
+          ? 'mdi-thumb-down'
+          : 'mdi-thumb-down-outline'
+      "
+    ></v-icon>
+    <div class="ml-2">{{ reactable.dislikes_count }}</div>
+  </v-btn>
 </template>

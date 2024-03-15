@@ -13,7 +13,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <v-app>
+  <v-app id="app">
     <v-main>
       <router-view />
     </v-main>
@@ -21,3 +21,9 @@ onBeforeMount(async () => {
     <bottom-navigation />
   </v-app>
 </template>
+
+<style>
+* {
+  font-family: "Helvetica Neue", "Helvetica", "Arial" !important;
+}
+</style>

@@ -75,10 +75,10 @@ function cancelReply(comment) {
 </script>
 
 <template>
-  <div>
+  <div :elevation="2" class="py-4">
     <div class="d-flex justify-start" v-if="comment">
       <div class="pr-2">
-        <v-avatar>
+        <v-avatar size="26px">
           <v-img
             v-if="comment.user.avatar"
             :src="appStore.storeUrl + comment.user.avatar"
@@ -109,8 +109,8 @@ function cancelReply(comment) {
               @click="newReply(comment)"
               size="x-small"
               variant="text"
-              block
               rounded="pill"
+              color="primary"
               class="text-caption"
             >
               Reply
@@ -172,7 +172,7 @@ function cancelReply(comment) {
             @click="getReplies(comment)"
             :loading="loadingReplies"
             :disabled="loadingReplies"
-            variant="text"
+            variant="tonal"
             color="primary"
             size="small"
             block
@@ -184,6 +184,5 @@ function cancelReply(comment) {
         </div>
       </div>
     </div>
-    <v-divider class="mb-4"></v-divider>
   </div>
 </template>

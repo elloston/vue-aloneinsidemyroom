@@ -13,7 +13,7 @@ defineProps({
 <template>
   <div class="d-flex" v-if="reply">
     <div class="mr-2">
-      <v-avatar>
+      <v-avatar size="24px">
         <v-img
           v-if="reply.user.avatar"
           :src="appStore.storeUrl + reply.user.avatar"

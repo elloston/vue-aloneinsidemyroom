@@ -76,10 +76,10 @@ function cancelCommentToPost(post) {
 
 <template>
   <div v-if="post">
-    <v-card class="mb-8 pa-4">
+    <div class="mb-8 py-4" rounded="lg">
       <div class="d-flex justify-start">
         <div class="mr-2">
-          <v-avatar>
+          <v-avatar size="30px">
             <v-img
               v-if="post.user.avatar"
               :src="appStore.storeUrl + post.user.avatar"
@@ -111,34 +111,32 @@ function cancelCommentToPost(post) {
             </div>
           </div>
           <!-- Content -->
-          <div v-html="post.content" class="mb-2"></div>
+          <div v-html="post.content" class="mb-4"></div>
 
           <!-- Reactions -->
-          <div class="d-flex mb-2">
-            <reactions-component :reactable="post" reactableType="post" />
+          <div class="d-flex mb-4">
+            <div>
+              <reactions-component :reactable="post" reactableType="post" />
+            </div>
+
+            <div>
+              <v-btn
+                @click="newCommentToPost(post)"
+                size="x-small"
+                variant="text"
+                rounded="pill"
+                color="primary"
+                class="text-caption ml-2"
+              >
+                Leave a comment
+              </v-btn>
+            </div>
           </div>
 
-          <v-divider class="mb-2"></v-divider>
-
-          <!-- Comments -->
           <div class="w-100">
-            <div class="text-caption text-start mb-2">
-              {{ post.comments?.data.length }} comments
-            </div>
             <!-- New Comment -->
             <div>
-              <div v-if="!post.comments.new">
-                <v-btn
-                  @click="newCommentToPost(post)"
-                  size="small"
-                  variant="text"
-                  color="primary"
-                  block
-                  class="text-caption mb-4"
-                >
-                  Leave a comment
-                </v-btn>
-              </div>
+              <div v-if="!post.comments.new"></div>
 
               <div v-else>
                 <v-textarea
@@ -197,11 +195,15 @@ function cancelCommentToPost(post) {
               block
               class="text-body-2"
             >
-              More comments
+              <div class="text-caption text-start ml-2">
+                {{ post.comments?.meta.total - post.comments.data.length }}
+                comments
+              </div>
             </v-btn>
           </div>
         </div>
       </div>
-    </v-card>
+    </div>
+    <v-divider></v-divider>
   </div>
 </template>

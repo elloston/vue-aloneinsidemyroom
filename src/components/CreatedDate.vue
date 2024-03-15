@@ -6,21 +6,32 @@ defineProps({
 </script>
 
 <template>
-  <div class="font-weight-light text-caption">
-    <router-link class="created-date-link" v-if="link" :to="link">
-      <div>
-        {{ $dateFormat(date) }}
-      </div>
-    </router-link>
+  <v-btn
+    v-if="link"
+    :to="link"
+    variant="text"
+    size="x-small"
+    color="primary"
+    class="font-weight-light text-caption px-0"
+  >
+    {{ $dateFormat(date) }}
+  </v-btn>
 
-    <div v-else>
-      {{ $dateFormat(date) }}
-    </div>
+  <div v-else>
+    {{ $dateFormat(date) }}
   </div>
 </template>
 
 <style>
 .created-date-link {
   text-decoration: none;
+}
+
+.dark-theme .created-date-link {
+  color: #fff;
+}
+
+.light-theme .created-date-link {
+  color: #000;
 }
 </style>

@@ -47,13 +47,20 @@ onMounted(async () => {
 <template>
   <v-container>
     <v-row class="py-10 justify-center">
-      <v-col cols="12" sm="11" md="10" lg="8">
+      <v-col cols="12" sm="9" md="7" lg="6">
         <h1 class="text-h5 text-md-h4 font-weight-medium mb-4">
           Alone Inside My Room
         </h1>
         <!-- New post -->
         <div class="mb-8">
-          <v-btn @click="newPost" block color="primary" class="text-body-1">
+          <v-btn
+            @click="newPost"
+            block
+            color="primary"
+            variant="tonal"
+            rounded="lg"
+            class="text-caption"
+          >
             New post
           </v-btn>
         </div>

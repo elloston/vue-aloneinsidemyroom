@@ -17,10 +17,8 @@ onMounted(async () => {
   <div>
     <v-container>
       <v-row class="justify-center">
-        <v-col cols="12" lg="8">
-          <v-card v-if="post">
-            <post-component :post="post" />
-          </v-card>
+        <v-col v-if="post" cols="12" lg="8">
+          <post-component :post="post" />
         </v-col>
       </v-row>
     </v-container>

@@ -9,23 +9,12 @@ import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
 
 // Composables
-import { createVuetify, type ThemeDefinition } from "vuetify";
-
-const myCustomLightTheme: ThemeDefinition = {
-  dark: false,
-  colors: {
-    //
-  },
-  variables: {
-    //
-  },
-};
+import { createVuetify } from "vuetify";
 
 export default createVuetify({
   theme: {
-    defaultTheme: "dark",
-    themes: {
-      myCustomLightTheme,
-    },
+    defaultTheme: window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light",
   },
 });

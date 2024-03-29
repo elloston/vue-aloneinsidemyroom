@@ -88,7 +88,7 @@ function cancelCommentToPost(post) {
           </v-avatar>
         </div>
 
-        <div class="w-100">
+        <v-col class="w-100 post-content-scrollable">
           <!-- User -->
           <div class="mb-2">
             <author-link :user="post.user" />
@@ -201,9 +201,16 @@ function cancelCommentToPost(post) {
               </div>
             </v-btn>
           </div>
-        </div>
+        </v-col>
       </div>
     </div>
     <v-divider></v-divider>
   </div>
 </template>
+
+<style>
+.post-content-scrollable {
+  overflow: scroll;
+  word-wrap: normal;
+}
+</style>
